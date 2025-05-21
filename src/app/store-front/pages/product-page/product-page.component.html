@@ -1,1 +1,42 @@
-<p>product-page works!</p>,
+@if( productResource.isLoading()){
+    <div class="flex justify-center items-center h-screen">
+        <span class="loading loading-spinner loading-lg"> </span>
+    </div>
+
+}
+
+@if( productResource.hasValue()){
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        
+        <!-- Imagen del producto (izquierda) -->
+        <div class="w-full">
+            <product-carousel  [images]="productResource.value().img" [productId]="productResource.value()._id" class="max-w-xs w-full h-auto"/>
+        </div>
+    
+        <!-- Información del producto (derecha) -->
+        <div class="space-y-4 text-center md:text-left">
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800"> {{ productResource.value()?.name }}</h2>
+          <p class="text-gray-600">{{ productResource.value()?.description }}</p>
+          
+          <ul class="text-sm text-gray-500 list-disc list-inside">
+            <li>100% algodón</li>
+            <li>Disponible en tallas S, M, L, XL</li>
+            <li>Color: Negro, Blanco, Azul</li>
+          </ul>
+          
+          <div class="text-2xl font-semibold text-gray-900">$29.99</div>
+          
+          <button class="bg-neutral-900 text-white px-6 py-2 rounded hover:bg-neutral-800 transition">
+            Añadir al carrito
+          </button>
+        </div>
+    
+      </div>
+    </div>
+}
+    
+
+
+

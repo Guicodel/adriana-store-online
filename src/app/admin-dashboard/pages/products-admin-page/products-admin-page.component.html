@@ -1,0 +1,29 @@
+
+
+<h1 class="text-2xl font-bold">Listado de Productos</h1>
+<h3 class="text-lg">Cantidad de Productos
+    <span class="text-accent">10</span>
+</h3>
+<div class="divider before:bg-gray-400 after:bg-gray-400 text-gray-300 my-4"></div>
+<div class="flex gap-2 items-center h-10">
+    <app-pagination [currentPage]="paginationService.currentPage()"
+        [numberOfItems]="productsResource.value()?.total ?? 0"
+        [itemsPerPage]="productsPerPage()"/>
+        <select class="select select-primary mb-5 w-50"
+        (change) = "onSelectChange(selectPerPage.value)"
+        #selectPerPage
+        >
+
+
+          <option disabled selected>Cantidad de productos por página</option>
+          <option value="1">1</option>
+          <option value="4">4</option>
+          <option value="8">8</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        
+        </select>
+
+</div>
+
+<product-table [products]="productsResource.value()?.products ?? []" />

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet  } from '@angular/router';
 import { SectionNavbarComponent } from '../../components/section-navbar/section-navbar.component';
 
 @Component({
@@ -7,4 +7,6 @@ import { SectionNavbarComponent } from '../../components/section-navbar/section-
   imports: [RouterOutlet,SectionNavbarComponent],
   templateUrl: './store-front-layout.component.html',
 })
-export class StoreFrontLayoutComponent { }
+export class StoreFrontLayoutComponent { 
+    
+}

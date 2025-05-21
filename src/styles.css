@@ -1,5 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 @plugin "daisyui"{
-    themes: light --default, dark --prefersdark, nord;
+    themes: light --default, dark --prefersdark, nord, night;
   }
+@theme {
+  --font-agbalumo: "Agbalumo", "sans-serif";
+  --font-vina-sans: "Vina-Sans", "sans-serif";
+  --animate-fadeIn: fadeIn 0.3s ease-in-out;
+  @keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100%{
+      opacity: 1;
+    }
+    
+  }
+
+}
+@font-face {
+  font-family: "Agbalumo";
+  src: url("/assets/fonts/agbalumo/Agbalumo-Regular.ttf")
+    format("truetype");
+}
+@font-face {
+  font-family: "Vina-Sans";
+  src: url("/assets/fonts/vina-sans/VinaSans-Regular.ttf")
+    format("truetype");
+}

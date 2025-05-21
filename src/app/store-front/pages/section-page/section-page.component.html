@@ -1,1 +1,29 @@
-<p>section-page works!</p>,
+
+<gender-navbar *ngIf="section()==='clothes'"></gender-navbar>
+
+<app-pagination [currentPage]="paginationService.currentPage()"
+    [numberOfItems]="productsResource.value()?.total ?? 0"
+    [itemsPerPage]="paginationService.itemsPerPage"/>
+<div class="flex justify-self-end px-4 mt-3">
+  <select
+  class="select select-primary w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+  <option disabled selected>Escoge una categoria</option>
+  <option>VScode</option>
+  <option>VScode fork</option>
+  <option>Another VScode fork</option>
+</select>
+
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-3">
+
+    @for (product of productsResource.value()?.products; track $index){
+        <product-card [product]="product"/>
+
+    }
+    
+</div>
+
+
+
+

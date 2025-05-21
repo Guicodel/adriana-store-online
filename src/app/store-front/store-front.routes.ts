@@ -4,6 +4,7 @@ import { HomePageComponent } from "./pages/home-page/home-page.component";
 import { SectionPageComponent } from "./pages/section-page/section-page.component";
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
+import { GenderPageComponent } from "./pages/gender-page/gender-page.component";
 
 
 
@@ -18,12 +19,13 @@ export const storeFrontRoutes: Routes = [
             },
             {
                 path: 'section/:section',
-                component: SectionPageComponent
+                component: SectionPageComponent,  
             },
             {
-                path: 'product/:id',
+                path: 'products/:id',
                 component: ProductPageComponent
             },
+            
             {
                 path: '**',
                 component: NotFoundPageComponent
