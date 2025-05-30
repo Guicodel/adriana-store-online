@@ -1,11 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
 @plugin "daisyui"{
     themes: light --default, dark --prefersdark, nord, night;
   }
 @theme {
   --font-agbalumo: "Agbalumo", "sans-serif";
   --font-vina-sans: "Vina-Sans", "sans-serif";
+  --font-quicksand: "QuickSand", "sans-serif";
+  --font-roboto: "Roboto", "sans-serif";
+  --font-playfair-display: "PlayfairDisplay", "sans-serif";
   --animate-fadeIn: fadeIn 0.3s ease-in-out;
   @keyframes fadeIn {
     0% {
@@ -27,4 +31,44 @@
   font-family: "Vina-Sans";
   src: url("/assets/fonts/vina-sans/VinaSans-Regular.ttf")
     format("truetype");
+}
+@font-face {
+  font-family: "QuickSand";
+  src: url("/assets/fonts/quicksand/QuickSand-regular.ttf")
+    format("truetype");
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/assets/fonts/roboto/Roboto-Regular.ttf")
+    format("truetype");
+}
+@font-face {
+  font-family: "PlayfairDisplay";
+  src: url("/assets/fonts/playfair-display/PlayfairDisplay-Regular.ttf")
+    format("truetype");
+}
+
+
+@tailwind utilities;
+
+@layer components {
+  .btn-save {
+    @apply bg-blue-700 hover:bg-blue-800 text-white font-medium py-2 px-4 rounded 
+           shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400;
+  }
+
+  .btn-cancel {
+    @apply bg-rose-400 hover:bg-rose-500 text-white font-semibold py-2 px-4 rounded shadow 
+           transition duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-100 mb-1;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-2 bg-gray-800 border border-gray-800 text-white rounded-md shadow-sm 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+           transition duration-200;
+  }
 }
