@@ -13,7 +13,11 @@ export class SectionsService {
   ['JUGUETES', 'Juguetes'],
   ['EN OFERTA', 'En oferta']
 ]);
+  private upperCaseSections = ['PRENDAS DE VESTIR','DISFRACES','ACCESORIOS PARA EL HOGAR','JUGUETES','EN OFERTA'];
   private sectionsTranslate = Array.from(this.dictionary.entries());
+  get upperSections(){
+    return this.upperCaseSections
+  }
 
   get sections(){
     return this.dictionary;

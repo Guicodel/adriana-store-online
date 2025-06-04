@@ -9,6 +9,12 @@
            <img [src]="baseUrl+productId()+'/'+image" alt="Producto" 
            class="rounded-lg shadow-md w-full h-auto object-cover max-h-[400px]"/>
        </div>
+    }@empty
+    {
+        <div class="swiper-slide">
+           <img src='./assets/images/no-image.jpg' alt="Producto" 
+           class="rounded-lg shadow-md w-full h-auto object-cover max-h-[400px]"/>
+       </div>
     }
     <!-- { productId:product()._id,
                  productImg:product().img} -->

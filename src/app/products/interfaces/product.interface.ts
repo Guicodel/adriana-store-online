@@ -23,7 +23,20 @@ export interface Product {
     gender:      string;
 
 }
-
+export interface NewProduct{
+    name:string,
+    section:string,
+    categoryId:string,
+    description:string,
+    price:number,
+    stock:number,
+    available?:string,
+    brand?:string,
+    gender?:string,
+    size?:string[],
+    img?:string[],
+    userId?:string
+}
 export interface ImageOptions{
   productId:string,
   productImg:string[]

@@ -43,5 +43,13 @@ export class CategoriesService {
     )
     
   }
+  deleteCategory(id:string){
+    return this.http.delete(`${this.baseApiUrl}/categories/${id}`).pipe(
+      catchError((error:HttpErrorResponse)=>{
+        console.error('Error en el servicio', error.error);
+        return throwError(()=>error);
+      })
+    )
+  }
 
 }

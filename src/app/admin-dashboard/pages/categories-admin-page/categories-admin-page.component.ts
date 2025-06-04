@@ -20,6 +20,7 @@ export class CategoriesAdminPageComponent {
       arrayDictionarySection = signal(this.sectionsService.dictionaySections);
       selectedSection = signal('');
       title = signal<any>('Todas las Categorias');
+      dataModificated = signal(false);
       showError = false;
       formTitle = signal('NUEVA CATEGORIA');
       categoryIdUpdated = '';//esta propiedad se usa para poder asignarle el id de la categoria a actualizar, se manda como parametro al metodo del servicio 
@@ -30,6 +31,11 @@ export class CategoriesAdminPageComponent {
       messageControl= signal(false);
       messageSave = 'La nueva categoría se guardo correctamente';
       messageUpdate = 'La categoría se actualizo correctamente';
+      messageDelete = 'La categoría seleccionada se eliminó';
+      alertDeleteMessage = signal(false);
+      modalDelete = signal(false);
+      categoryIdDeleted = signal('');
+      categoryNameDeleted = signal('');
       originalValues = {
         name: '',
         section: '',
@@ -47,14 +53,16 @@ export class CategoriesAdminPageComponent {
       });
 
       categoriesResource = rxResource({
-        request:()=>({section:this.selectedSection(),band:this.addingCategory()}),
+        request:()=>({section:this.selectedSection(),band:this.addingCategory(),dataModify:this.dataModificated()}),
         loader:({request})=>{
           return this.categoriesServices.getCategoriesBySection(request.section)
-          .pipe(tap(()=>this.addingCategory.set(false)));
+          .pipe(tap(()=>{this.addingCategory.set(false);
+                          this.dataModificated.set(false);
+          }));
         }
       });
       onSelectedSectionChange(section:string){
-        console.log('se cambia el selector', section);
+        
         this.selectedSection.set(section);
         this.title.set(this.sections().get(section));
       }
@@ -74,10 +82,9 @@ export class CategoriesAdminPageComponent {
               setTimeout(()=>{
                 this.categoryDataSave.set(false);
               },3000);
-              //this.onSelectedSectionChange('EN OFERTA');
+        
               this.addingCategory.set(true);
-              //this.onSelectedSectionChange(this.categoryForm.value.section!.toUpperCase());
-              //this.selectedSection.set(this.categoryForm.value.section!);
+
               console.log('esta es la seccion que debe cargar :',this.categoryForm.value.section)
               this.onCancel();
             },
@@ -87,7 +94,6 @@ export class CategoriesAdminPageComponent {
               // Manejo de errores: mostrar alerta, redirigir, etc.
             }
           });
-          // //console.log(`esta es la respuesta de la api${data}`);
         }
         else{
             if(this.categoryForm.value.name===this.categoryToUpdate.name)
@@ -158,7 +164,6 @@ export class CategoriesAdminPageComponent {
         this.showError = false;
       }
       onEdithPush(id:string,name:string,section:string){
-        //console.log(id,name, section);
         this.formTitle.set('ACTUALIZAR CATEGORIA');
         this.edithOption=true;
         this.categoryIdUpdated = id;
@@ -170,4 +175,37 @@ export class CategoriesAdminPageComponent {
         }
         this.categoryForm.reset({name:name,section:section});
       }
+      onDeletePush(id: string, name:string)
+      {
+        this.categoryIdDeleted.set(id);
+        this.modalDelete.set(true);
+        this.categoryNameDeleted.set(name);
+      }
+      confirmationDelete(confirmation:boolean){
+          if(confirmation)
+          {
+              this.categoriesServices.deleteCategory(this.categoryIdDeleted()).subscribe({
+              next: (data) => {
+                console.log('✅ Respuesta exitosa:', data);
+                // Aquí puedes actualizar signals, formularios, etc.
+                this.categoryIdDeleted.set('');
+                this.modalDelete.set(false);
+                this.alertDeleteMessage.set(true);
+                this.dataModificated.set(true);
+                setTimeout(()=>{
+                  this.alertDeleteMessage.set(false);
+                },3000);
+              },
+              error: (error) => {
+                console.log('Error en la solicitud:', error.error);
+                this.showMessageError(error.error.msg);
+                // Manejo de errores: mostrar alerta, redirigir, etc.
+              }
+            });
+            return;
+          }
+          this.categoryIdDeleted.set('');
+          this.modalDelete.set(false);
+      }
+
 }
