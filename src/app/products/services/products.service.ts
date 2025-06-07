@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Product, ProductsResponse } from "../interfaces/product.interface";
-import { catchError, Observable, of, tap, throwError } from "rxjs";
+import { catchError, forkJoin, map, Observable, of, switchMap, tap, throwError } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { Category } from "../../categories/interfaces/category.inteface";
 import { User } from "../../auth/interfaces/user.interface";
@@ -56,6 +56,10 @@ export class ProductsService{
                 }
             )
             .pipe(
+                catchError((error:HttpErrorResponse)=>{
+                console.error('error en el servicio', error.error);
+                return throwError (()=>error);
+                })
                // tap((resp)=> console.log(resp)),
                 //tap((resp)=> this.productsCache.set(key,resp))
             );
@@ -72,27 +76,63 @@ export class ProductsService{
         return this.http
             .get<Product>(`${baseApiUrl}/products/${id}`)
             .pipe(
-               tap((resp)=> console.log(resp)),
+               catchError((error:HttpErrorResponse)=>{
+                console.error('error en el servicio', error.error);
+                return throwError (()=>error);
+                })
                 //tap((resp)=>this.productCache.set(key,resp))
             )
     }
-    updateProduct(id:string,producLike:Partial<Product>){
-        return this.http.put<Product>(`${baseApiUrl}/products/${id}`,producLike).pipe(
-            //tap((product)=>this.updateProductsCache(product)),
-            catchError((error:HttpErrorResponse)=>{
-                    console.error('error en el servicio', error.error);
-                    return throwError (()=>error);
-            })
+    updateProduct(id:string,producLike:Partial<Product>,imageFileList?:FileList){
+
+        const currentImages = producLike.img ?? [];
+
+        return this.uploadImages(id,imageFileList).pipe(
+            
+        map((imagesNames)=>({
+            ...producLike,
+            img:[...currentImages, ...imagesNames]
+        })),
+        switchMap((updatedProduct)=>
+            this.http.put<Product>(`${baseApiUrl}/products/${id}`,updatedProduct)
+        ),
+        catchError((error:HttpErrorResponse)=>{
+                console.error('error en el servicio', error.error);
+                return throwError (()=>error);
+        })
         )
+
     }
-    createProduct(productLike:Partial<Product>)
+    createProduct(productLike:Partial<Product>,imageFileList?:FileList)
     {
+
         return this.http.post<Product>(`${baseApiUrl}/products`, productLike).pipe(
             catchError((error:HttpErrorResponse)=>{
                 console.error('error en el servicio',error.error);
                 return throwError(()=>error);
             })
         )
+    }
+    uploadImages(id:string, images?: FileList):Observable<string[]>{
+         if(!images)return of ([]);
+
+         const uploadObsevables = Array.from(images).map((imageFile)=>
+            this.uploadImage(id,imageFile)
+        );
+        return forkJoin(uploadObsevables).pipe(
+             catchError((error:HttpErrorResponse)=>{
+                console.error('error en el servicio',error.error);
+                return throwError(()=>error);
+            })
+        );
+
+    }
+    uploadImage(id:string,image:File):Observable<string>{
+        const formData = new FormData();
+        formData.append('imgFiles',image);
+        return this.http.put<{imgName:string}>(`${baseApiUrl}/uploads/products/${id}`,formData)
+                .pipe(map((resp)=>resp.imgName));
+
     }
     updateProductsCache(product:Product){
         const productId = product._id;

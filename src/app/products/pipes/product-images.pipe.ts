@@ -12,7 +12,7 @@ export class ProductImagesPipe implements PipeTransform {
 
     if(value.productImg.length < 1)
       return `./assets/images/no-image.jpg`;
-    return `http://localhost:3000/api/uploads/products/${value.productId}/${value.productImg[0]}`
+    return `${baseApiUrl}/uploads/products/${value.productId}/${value.productImg[0]}`
 
 }
 }

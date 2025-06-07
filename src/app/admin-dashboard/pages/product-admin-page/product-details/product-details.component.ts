@@ -1,5 +1,5 @@
 import { Component, DestroyRef, effect, inject, input, OnInit, signal } from '@angular/core';
-import { NewProduct, Product } from '../../../../products/interfaces/product.interface';
+import { Product } from '../../../../products/interfaces/product.interface';
 import { ProductCarouselComponent } from '../../../../products/components/product-carousel/product-carousel.component';
 import { SectionsService } from '../../../../shared/sections.service';
 import { CategoriesService } from '../../../../categories/services/categories.service';
@@ -25,7 +25,7 @@ export class ProductDetailsComponent implements OnInit{
         categoriesService = inject(CategoriesService);
         productsService = inject(ProductsService);
         sections = signal(this.sectionsService.upperSections);
-        initialCategories = signal([]);
+        //initialCategories = signal([]);
         tempImages = signal<string[]>([]);
         imageFileList:FileList | undefined = undefined;
         messageSave = 'El producto ha sido guardado correctamente';
@@ -35,7 +35,8 @@ export class ProductDetailsComponent implements OnInit{
         messageErrorFromApi = '';
         categoriesBySections = signal<CategoriesResponse>({total:0,categories:[]});
         gender = ['Varón','Mujer','Niños','Unisex'];
-        hasClothesAtributes = signal(true);
+        saveDataOption = true;
+        //hasClothesAtributes = signal(true);
         fb = inject(FormBuilder);
         productForm = this.fb.group({
           name: ['',Validators.required],
@@ -99,8 +100,8 @@ export class ProductDetailsComponent implements OnInit{
       setFormValue(productLike: Partial<Product>){
         this.productForm.patchValue(productLike);
         this.productForm.patchValue({category:productLike.categoryId?.name});
-        console.log('este es el productLike=> ',productLike);
-        console.log('aqui se asigna inicial al formulario con esta data=> ',this.productForm.value);
+        // console.log('este es el productLike=> ',productLike);
+        // console.log('aqui se asigna inicial al formulario con esta data=> ',this.productForm.value);
         
       }
       onSizeClicked(size:string){
@@ -126,9 +127,28 @@ export class ProductDetailsComponent implements OnInit{
         };
 
         if(this.product()._id === 'new'){
-            this.productsService.createProduct(productLike).subscribe({
+          this.saveDataOption = true;
+            this.productsService.createProduct(productLike,this.imageFileList).subscribe({
               next:(product)=>{
                   //this.router.navigate(['/admin/products',product._id]);
+                  if(this.imageFileList)
+                  {
+                    const { name, ...newProduct} = productLike
+                    this.productsService.updateProduct(product._id, newProduct,this.imageFileList).subscribe({
+                    next:(data)=>{
+                        console.log('se creo correctamente el producto con imagenes');
+                        // this.showMessage.set(true);
+                        // setTimeout(()=>{
+                        //       this.showMessage.set(false);
+                        //       this.location.back();
+                        //     },2000);
+                        },
+                        error:(error)=>{
+                          console.log('este error se muestra al crear con imagenes', error);
+                          
+                        }
+                      })
+                  }
                   this.showMessage.set(true);
                   setTimeout(()=>{
                         this.showMessage.set(false);
@@ -144,14 +164,15 @@ export class ProductDetailsComponent implements OnInit{
         }
         else
         {
+            this.saveDataOption = false
             if(this.product().name.toUpperCase() === productLike.name?.toUpperCase())
             {
               const {name, ...productTosave} = productLike;
               productLike = productTosave;
             }
-            this.productsService.updateProduct(this.product()._id, productLike).subscribe({
+            this.productsService.updateProduct(this.product()._id, productLike,this.imageFileList).subscribe({
               next:(data)=>{
-                  console.log('data actualizada',data);
+                  
                   this.showMessage.set(true);
                   setTimeout(()=>{
                         this.showMessage.set(false);
@@ -161,7 +182,8 @@ export class ProductDetailsComponent implements OnInit{
               error:(error)=>{
                     console.log('error', error);
                     this.showModalError.set(true);
-                    this.messageErrorFromApi=error.error.msg;
+                    this.messageErrorFromApi=error.error;
+                    
     
               }
             })
@@ -180,5 +202,8 @@ export class ProductDetailsComponent implements OnInit{
             URL.createObjectURL(file)
           );
           this.tempImages.set(imagesUrls);
+      }
+      deleteTempImg(index:number){
+        this.tempImages().splice(index,1);
       }
  }
